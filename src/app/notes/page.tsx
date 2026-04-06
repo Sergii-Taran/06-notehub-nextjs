@@ -1,17 +1,31 @@
 import {
+  HydrationBoundary,
   QueryClient,
   dehydrate,
-  HydrationBoundary,
 } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/api';
-import NotesClient from './Notes.client';
 
-export default async function NotesPage() {
+import NotesClient from './NotesClient';
+import { fetchNotes } from '@/lib/api';
+
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+    search?: string;
+  }>;
+}
+
+export default async function NotesPage({ searchParams }: Props) {
+  // 🔥 ВАЖЛИВО
+  const resolvedSearchParams = await searchParams;
+
+  const page = Number(resolvedSearchParams.page) || 1;
+  const search = resolvedSearchParams.search || '';
+
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['notes'],
-    queryFn: () => fetchNotes(),
+    queryKey: ['notes', page, search],
+    queryFn: () => fetchNotes(page, search),
   });
 
   return (

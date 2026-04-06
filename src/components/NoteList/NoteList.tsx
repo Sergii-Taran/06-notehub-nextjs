@@ -20,7 +20,12 @@ export default function NoteList({ notes }: NoteListProps) {
     mutationFn: deleteNote,
     onSuccess: () => {
       toast.success('Note deleted');
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
+
+      // 🔥 ВАЖЛИВО: інвалідовуємо ВСІ notes-запити
+      queryClient.invalidateQueries({
+        queryKey: ['notes'],
+        exact: false,
+      });
     },
     onError: () => {
       toast.error('Failed to delete note');
