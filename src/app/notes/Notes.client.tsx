@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { fetchNotes } from '@/lib/api';
+import NoteList from '@/components/NoteList/NoteList';
 
 export default function NotesClient() {
   const { data, isLoading, error } = useQuery({
@@ -21,11 +22,7 @@ export default function NotesClient() {
     <div>
       <h2>Notes</h2>
 
-      <ul>
-        {data?.notes.map((note) => (
-          <li key={note.id}>{note.title}</li>
-        ))}
-      </ul>
+      <ul>{data && <NoteList notes={data.notes} />}</ul>
     </div>
   );
 }
