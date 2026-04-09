@@ -16,7 +16,7 @@ export default function Pagination({ page, totalPages, onPageChange }: Props) {
   return (
     <ReactPaginate
       pageCount={totalPages}
-      forcePage={page - 1} // 🔥 важливо (react-paginate з 0)
+      forcePage={page - 1}
       onPageChange={(event) => onPageChange(event.selected + 1)}
       containerClassName={css.pagination}
       activeClassName={css.active}

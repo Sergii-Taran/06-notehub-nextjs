@@ -6,7 +6,6 @@ export interface FetchNotesResponse {
   totalPages: number;
 }
 
-// 🔹 Отримання списку нотаток
 export const fetchNotes = async (
   page: number = 1,
   search: string = ''
@@ -22,20 +21,26 @@ export const fetchNotes = async (
   return res.data;
 };
 
-// 🔹 Створення нотатки
 export const createNote = async (note: CreateNoteDto): Promise<Note> => {
   const res = await api.post<Note>('/notes', note);
   return res.data;
 };
 
-// 🔹 Видалення нотатки
 export const deleteNote = async (id: string): Promise<Note> => {
   const res = await api.delete<Note>(`/notes/${id}`);
   return res.data;
 };
 
-// 🔹 Отримання однієї нотатки
 export const fetchNoteById = async (id: string): Promise<Note> => {
-  const res = await api.get<Note>(`/notes/${id}`);
-  return res.data;
+  try {
+    const res = await api.get<Note>(`/notes/${id}`);
+
+    if (!res.data || !res.data.id) {
+      throw new Error('Note not found');
+    }
+
+    return res.data;
+  } catch (_) {
+    throw new Error('Note not found');
+  }
 };

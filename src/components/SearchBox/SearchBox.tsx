@@ -11,18 +11,9 @@ interface Props {
 export default function SearchBox({ onSearch, initialValue = '' }: Props) {
   const [query, setQuery] = useState(initialValue);
 
-  // 🔥 синхронізація з URL
   useEffect(() => {
     setQuery(initialValue);
   }, [initialValue]);
-
-  useEffect(() => {
-    const id = setTimeout(() => {
-      onSearch(query);
-    }, 500);
-
-    return () => clearTimeout(id);
-  }, [query, onSearch]);
 
   return (
     <input
@@ -30,7 +21,11 @@ export default function SearchBox({ onSearch, initialValue = '' }: Props) {
       type="text"
       placeholder="Search notes..."
       value={query}
-      onChange={(e) => setQuery(e.target.value)}
+      onChange={(e) => {
+        const value = e.target.value;
+        setQuery(value);
+        onSearch(value);
+      }}
     />
   );
 }

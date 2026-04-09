@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { fetchNotes } from '@/lib/api/notes';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import CreateNoteModal from '@/components/CreateNoteModal/CreateNoteModal';
 import Pagination from '@/components/Pagination/Pagination';
+
+import css from './Notes.module.css';
 
 export default function NotesClient() {
   const router = useRouter();
@@ -25,17 +28,20 @@ export default function NotesClient() {
     placeholderData: (prev) => prev,
   });
 
-  const updatePage = (newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString());
+  const updatePage = useCallback(
+    (newPage: number) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-    params.set('page', String(newPage));
+      params.set('page', String(newPage));
 
-    if (search) params.set('search', search);
+      if (search) params.set('search', search);
 
-    router.push(`?${params.toString()}`);
-  };
+      router.push(`?${params.toString()}`);
+    },
+    [searchParams, search, router]
+  );
 
-  const handleSearch = (value: string) => {
+  const debouncedSearch = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams();
 
     if (value) params.set('search', value);
@@ -43,29 +49,45 @@ export default function NotesClient() {
     params.set('page', '1');
 
     router.push(`?${params.toString()}`);
-  };
+  }, 500);
+
+  useEffect(() => {
+    if (data && data.totalPages > 0 && page > data.totalPages) {
+      updatePage(data.totalPages);
+    }
+  }, [data, page, updatePage]);
 
   if (isLoading) return <p>Loading...</p>;
+
   if (isError) {
     throw new Error('Failed to fetch notes');
   }
 
   return (
-    <div>
-      {/* 🔥 Create button */}
-      <button onClick={() => setIsOpen(true)}>+ Create Note</button>
+    <div className={css.wrapper}>
+      <div className={css.toolbar}>
+        {/* 🔍 Search */}
+        <SearchBox onSearch={debouncedSearch} initialValue={search} />
 
-      {/* 🔍 Search */}
-      <SearchBox onSearch={handleSearch} initialValue={search} />
+        {/* 🔽 Pagination */}
+        <div className={css.center}>
+          <Pagination
+            page={page}
+            totalPages={data?.totalPages || 1}
+            onPageChange={updatePage}
+          />
+        </div>
+
+        {/* ➕ Create */}
+        <button className={css.createButton} onClick={() => setIsOpen(true)}>
+          Create Note +
+        </button>
+      </div>
 
       {/* 📋 Notes */}
-      <NoteList notes={data?.notes || []} />
-
-      <Pagination
-        page={page}
-        totalPages={data?.totalPages || 1}
-        onPageChange={updatePage}
-      />
+      <div className={css.notes}>
+        <NoteList notes={data?.notes || []} />
+      </div>
 
       {/* 🔥 Modal */}
       {isOpen && <CreateNoteModal onClose={() => setIsOpen(false)} />}

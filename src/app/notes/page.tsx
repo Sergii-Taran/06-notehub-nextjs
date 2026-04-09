@@ -15,7 +15,6 @@ interface Props {
 }
 
 export default async function NotesPage({ searchParams }: Props) {
-  // 🔥 ВАЖЛИВО
   const resolvedSearchParams = await searchParams;
 
   const page = Number(resolvedSearchParams.page) || 1;

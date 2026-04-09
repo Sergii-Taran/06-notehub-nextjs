@@ -21,7 +21,6 @@ export default function NoteList({ notes }: NoteListProps) {
     onSuccess: () => {
       toast.success('Note deleted');
 
-      // 🔥 ВАЖЛИВО: інвалідовуємо ВСІ notes-запити
       queryClient.invalidateQueries({
         queryKey: ['notes'],
         exact: false,
@@ -37,34 +36,38 @@ export default function NoteList({ notes }: NoteListProps) {
   };
 
   return (
-    <ul className={css.list}>
-      {notes.map((note) => (
-        <li key={note.id} className={css.listItem}>
-          <h2 className={css.title}>{note.title}</h2>
+    <div className={css.listWrapper}>
+      <ul className={css.list}>
+        {notes.map((note) => (
+          <li key={note.id} className={css.listItem}>
+            <h2 className={css.title}>{note.title}</h2>
 
-          <p className={css.content}>{note.content}</p>
+            <p className={css.content}>{note.content}</p>
 
-          <div className={css.footer}>
-            <span className={css.tag}>{note.tag}</span>
+            <div className={css.footer}>
+              <span className={css.tag}>{note.tag}</span>
 
-            <div className={css.actions}>
-              <Link href={`/notes/${note.id}`} className={css.link}>
-                View details
-              </Link>
+              <div className={css.actions}>
+                <Link href={`/notes/${note.id}`} className={css.link}>
+                  View details
+                </Link>
 
-              <button
-                className={css.button}
-                onClick={() => handleDelete(note.id)}
-                disabled={mutation.isPending && mutation.variables === note.id}
-              >
-                {mutation.isPending && mutation.variables === note.id
-                  ? 'Deleting...'
-                  : 'Delete'}
-              </button>
+                <button
+                  className={css.button}
+                  onClick={() => handleDelete(note.id)}
+                  disabled={
+                    mutation.isPending && mutation.variables === note.id
+                  }
+                >
+                  {mutation.isPending && mutation.variables === note.id
+                    ? 'Deleting...'
+                    : 'Delete'}
+                </button>
+              </div>
             </div>
-          </div>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

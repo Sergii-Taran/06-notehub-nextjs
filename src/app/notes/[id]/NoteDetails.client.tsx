@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
+
 import { fetchNoteById } from '@/lib/api/notes';
 
 import css from './NoteDetails.module.css';
@@ -10,25 +11,22 @@ export default function NoteDetailsClient() {
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  const {
-    data: note,
-    isLoading,
-    error,
-  } = useQuery({
+  if (!id) {
+    throw new Error('Invalid note id');
+  }
+
+  const { data: note, isLoading } = useQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
+    throwOnError: true,
   });
 
   if (isLoading) {
     return <p>Loading, please wait...</p>;
   }
 
-  if (error) {
-    throw error;
-  }
-
   if (!note) {
-    return <p>Note not found</p>;
+    throw new Error('Note not found');
   }
 
   return (
