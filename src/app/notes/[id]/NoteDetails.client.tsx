@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import { fetchNoteById } from '@/lib/api';
+import { fetchNoteById } from '@/lib/api/notes';
 
 import css from './NoteDetails.module.css';
 
@@ -24,7 +24,7 @@ export default function NoteDetailsClient() {
   }
 
   if (error) {
-    return <p>Error: {(error as Error).message}</p>;
+    throw error;
   }
 
   if (!note) {

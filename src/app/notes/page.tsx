@@ -5,13 +5,13 @@ import {
 } from '@tanstack/react-query';
 
 import NotesClient from './NotesClient';
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes } from '@/lib/api/notes';
 
 interface Props {
-  searchParams: Promise<{
+  searchParams: {
     page?: string;
     search?: string;
-  }>;
+  };
 }
 
 export default async function NotesPage({ searchParams }: Props) {

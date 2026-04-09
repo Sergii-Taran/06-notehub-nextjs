@@ -1,20 +1,10 @@
-import axios from 'axios';
+import { api } from './client';
 import type { CreateNoteDto, Note } from '@/types/note';
 
 export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
-
-const BASE_URL = 'https://notehub-public.goit.study/api';
-
-// axios instance
-export const api = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    Authorization: `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`,
-  },
-});
 
 // 🔹 Отримання списку нотаток
 export const fetchNotes = async (
@@ -44,7 +34,7 @@ export const deleteNote = async (id: string): Promise<Note> => {
   return res.data;
 };
 
-// 🔹 Отримання однієї нотатки (ВАЖЛИВО для /notes/[id])
+// 🔹 Отримання однієї нотатки
 export const fetchNoteById = async (id: string): Promise<Note> => {
   const res = await api.get<Note>(`/notes/${id}`);
   return res.data;

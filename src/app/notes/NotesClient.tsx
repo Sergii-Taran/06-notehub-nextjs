@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes } from '@/lib/api/notes';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import CreateNoteModal from '@/components/CreateNoteModal/CreateNoteModal';
+import Pagination from '@/components/Pagination/Pagination';
 
 export default function NotesClient() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function NotesClient() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['notes', page, search],
     queryFn: () => fetchNotes(page, search),
-    keepPreviousData: true,
+    placeholderData: (prev) => prev,
   });
 
   const updatePage = (newPage: number) => {
@@ -45,7 +46,9 @@ export default function NotesClient() {
   };
 
   if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error loading notes</p>;
+  if (isError) {
+    throw new Error('Failed to fetch notes');
+  }
 
   return (
     <div>
@@ -58,23 +61,11 @@ export default function NotesClient() {
       {/* 📋 Notes */}
       <NoteList notes={data?.notes || []} />
 
-      {/* 🔽 Pagination */}
-      <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-        <button onClick={() => updatePage(page - 1)} disabled={page === 1}>
-          Prev
-        </button>
-
-        <span>
-          Page: {page} / {data?.totalPages}
-        </span>
-
-        <button
-          onClick={() => updatePage(page + 1)}
-          disabled={!data || page >= data.totalPages}
-        >
-          Next
-        </button>
-      </div>
+      <Pagination
+        page={page}
+        totalPages={data?.totalPages || 1}
+        onPageChange={updatePage}
+      />
 
       {/* 🔥 Modal */}
       {isOpen && <CreateNoteModal onClose={() => setIsOpen(false)} />}
