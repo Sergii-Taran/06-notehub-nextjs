@@ -8,15 +8,17 @@ import NotesClient from './NotesClient';
 import { fetchNotes } from '@/lib/api/notes';
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     search?: string;
-  };
+  }>;
 }
 
 export default async function NotesPage({ searchParams }: Props) {
-  const page = Number(searchParams.page) || 1;
-  const search = searchParams.search || '';
+  const params = await searchParams;
+
+  const page = Number(params.page) || 1;
+  const search = params.search || '';
 
   const queryClient = new QueryClient();
 
