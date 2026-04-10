@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { fetchNotes } from '@/lib/api/notes';
+import { fetchNotes, createNote } from '@/lib/api/notes';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
-import CreateNoteModal from '@/components/CreateNoteModal/CreateNoteModal';
 import Pagination from '@/components/Pagination/Pagination';
+import Modal from '@/components/Modal/Modal';
+import NoteForm from '@/components/NoteForm/NoteForm';
+
+import toast from 'react-hot-toast';
 
 import css from './Notes.module.css';
 
@@ -18,6 +21,26 @@ export default function NotesClient() {
   const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
+
+  // ✅ Hooks ВСІ НАГОРІ
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createNote,
+    onSuccess: () => {
+      toast.success('Note created');
+
+      queryClient.invalidateQueries({
+        queryKey: ['notes'],
+        exact: false,
+      });
+
+      setIsOpen(false);
+    },
+    onError: () => {
+      toast.error('Failed to create note');
+    },
+  });
 
   const page = Number(searchParams.get('page')) || 1;
   const search = searchParams.get('search') || '';
@@ -57,6 +80,7 @@ export default function NotesClient() {
     }
   }, [data, page, updatePage]);
 
+  // ✅ РАННІ RETURN після всіх хуків
   if (isLoading) return <p>Loading...</p>;
 
   if (isError) {
@@ -72,7 +96,7 @@ export default function NotesClient() {
         {/* 🔍 Search */}
         <SearchBox onSearch={debouncedSearch} initialValue={search} />
 
-        {/* 🔽 Pagination  */}
+        {/* 🔽 Pagination */}
         {totalPages > 1 && (
           <div className={css.center}>
             <Pagination
@@ -89,7 +113,7 @@ export default function NotesClient() {
         </button>
       </div>
 
-      {/* 📋 Notes / Empty state */}
+      {/* 📋 Notes / Empty */}
       <div className={css.notes}>
         {notes.length === 0 ? (
           <p className={css.empty}>No notes found</p>
@@ -99,7 +123,15 @@ export default function NotesClient() {
       </div>
 
       {/* 🔥 Modal */}
-      {isOpen && <CreateNoteModal onClose={() => setIsOpen(false)} />}
+      {isOpen && (
+        <Modal onClose={() => setIsOpen(false)}>
+          <NoteForm
+            onSubmit={(values) => mutation.mutate(values)}
+            isLoading={mutation.isPending}
+            onCancel={() => setIsOpen(false)}
+          />
+        </Modal>
+      )}
     </div>
   );
 }
