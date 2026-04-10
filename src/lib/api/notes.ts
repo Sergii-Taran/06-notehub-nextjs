@@ -40,7 +40,7 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
     }
 
     return res.data;
-  } catch (_) {
-    throw new Error('Note not found');
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('Failed to fetch note');
   }
 };

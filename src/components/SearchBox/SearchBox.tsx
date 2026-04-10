@@ -15,6 +15,12 @@ export default function SearchBox({ onSearch, initialValue = '' }: Props) {
     setQuery(initialValue);
   }, [initialValue]);
 
+  useEffect(() => {
+    if (query !== initialValue) {
+      onSearch(query);
+    }
+  }, [query, initialValue, onSearch]);
+
   return (
     <input
       className={css.input}
@@ -22,9 +28,7 @@ export default function SearchBox({ onSearch, initialValue = '' }: Props) {
       placeholder="Search notes..."
       value={query}
       onChange={(e) => {
-        const value = e.target.value;
-        setQuery(value);
-        onSearch(value);
+        setQuery(e.target.value);
       }}
     />
   );

@@ -63,20 +63,25 @@ export default function NotesClient() {
     throw new Error('Failed to fetch notes');
   }
 
+  const notes = data?.notes || [];
+  const totalPages = data?.totalPages || 1;
+
   return (
     <div className={css.wrapper}>
       <div className={css.toolbar}>
         {/* 🔍 Search */}
         <SearchBox onSearch={debouncedSearch} initialValue={search} />
 
-        {/* 🔽 Pagination */}
-        <div className={css.center}>
-          <Pagination
-            page={page}
-            totalPages={data?.totalPages || 1}
-            onPageChange={updatePage}
-          />
-        </div>
+        {/* 🔽 Pagination  */}
+        {totalPages > 1 && (
+          <div className={css.center}>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={updatePage}
+            />
+          </div>
+        )}
 
         {/* ➕ Create */}
         <button className={css.createButton} onClick={() => setIsOpen(true)}>
@@ -84,9 +89,13 @@ export default function NotesClient() {
         </button>
       </div>
 
-      {/* 📋 Notes */}
+      {/* 📋 Notes / Empty state */}
       <div className={css.notes}>
-        <NoteList notes={data?.notes || []} />
+        {notes.length === 0 ? (
+          <p className={css.empty}>No notes found</p>
+        ) : (
+          <NoteList notes={notes} />
+        )}
       </div>
 
       {/* 🔥 Modal */}

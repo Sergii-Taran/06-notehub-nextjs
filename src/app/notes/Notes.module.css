@@ -59,3 +59,10 @@
 .notes {
   margin-bottom: 24px;
 }
+
+.empty {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+  margin-top: 40px;
+}

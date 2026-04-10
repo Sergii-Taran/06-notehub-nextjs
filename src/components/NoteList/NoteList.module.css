@@ -7,11 +7,9 @@
   margin: 24px auto;
   list-style: none;
 
-  /* 🔥 ключове: обмежуємо ширину → максимум 4 картки */
   max-width: 1200px;
 }
 
-/* 📱 центруємо контент сторінки */
 .listWrapper {
   width: 100%;
   display: flex;
@@ -36,7 +34,6 @@
     box-shadow 0.15s ease;
 }
 
-/* 🔥 приємний hover */
 .listItem:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
@@ -75,7 +72,6 @@
   gap: 8px;
 }
 
-/* 🔵 кнопка перегляду */
 .link {
   padding: 6px 12px;
   font-size: 14px;
@@ -93,7 +89,6 @@
   background-color: #0b5ed7;
 }
 
-/* 🔴 кнопка видалення */
 .button {
   padding: 6px 12px;
   font-size: 14px;
