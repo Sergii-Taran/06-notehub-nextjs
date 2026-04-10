@@ -1,11 +1,22 @@
-import { api } from './client';
+import axios from 'axios';
 import type { CreateNoteDto, Note } from '@/types/note';
 
+const BASE_URL = 'https://notehub-public.goit.study/api';
+
+export const api = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    Authorization: `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`,
+  },
+});
+
+// 🔽 types
 export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
 
+// 🔽 API methods
 export const fetchNotes = async (
   page: number = 1,
   search: string = ''

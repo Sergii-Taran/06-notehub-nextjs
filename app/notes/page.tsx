@@ -4,8 +4,8 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
-import NotesClient from './NotesClient';
-import { fetchNotes } from '@/lib/api/notes';
+import NotesClient from './Notes.client';
+import { fetchNotes } from '@/lib/api';
 
 interface Props {
   searchParams: Promise<{
