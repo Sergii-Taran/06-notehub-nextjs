@@ -10,13 +10,11 @@ export const api = axios.create({
   },
 });
 
-// 🔽 types
 export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
 
-// 🔽 API methods
 export const fetchNotes = async (
   page: number = 1,
   search: string = ''

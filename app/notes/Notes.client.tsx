@@ -22,7 +22,6 @@ export default function NotesClient() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  // ✅ Hooks ВСІ НАГОРІ
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -80,7 +79,6 @@ export default function NotesClient() {
     }
   }, [data, page, updatePage]);
 
-  // ✅ РАННІ RETURN після всіх хуків
   if (isLoading) return <p>Loading...</p>;
 
   if (isError) {
@@ -93,10 +91,8 @@ export default function NotesClient() {
   return (
     <div className={css.wrapper}>
       <div className={css.toolbar}>
-        {/* 🔍 Search */}
         <SearchBox onSearch={debouncedSearch} initialValue={search} />
 
-        {/* 🔽 Pagination */}
         {totalPages > 1 && (
           <div className={css.center}>
             <Pagination
@@ -107,13 +103,11 @@ export default function NotesClient() {
           </div>
         )}
 
-        {/* ➕ Create */}
         <button className={css.createButton} onClick={() => setIsOpen(true)}>
           Create Note +
         </button>
       </div>
 
-      {/* 📋 Notes / Empty */}
       <div className={css.notes}>
         {notes.length === 0 ? (
           <p className={css.empty}>No notes found</p>
@@ -122,7 +116,6 @@ export default function NotesClient() {
         )}
       </div>
 
-      {/* 🔥 Modal */}
       {isOpen && (
         <Modal onClose={() => setIsOpen(false)}>
           <NoteForm
