@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react';
 import css from './SearchBox.module.css';
 
-interface Props {
+interface SearchBoxProps {
   onSearch: (value: string) => void;
   initialValue?: string;
 }
 
-export default function SearchBox({ onSearch, initialValue = '' }: Props) {
+export default function SearchBox({
+  onSearch,
+  initialValue = '',
+}: SearchBoxProps) {
   const [query, setQuery] = useState(initialValue);
 
   useEffect(() => {

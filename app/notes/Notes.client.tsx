@@ -1,18 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { fetchNotes, createNote } from '@/lib/api';
+import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
-
-import toast from 'react-hot-toast';
 
 import css from './Notes.module.css';
 
@@ -21,25 +19,6 @@ export default function NotesClient() {
   const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
-
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: createNote,
-    onSuccess: () => {
-      toast.success('Note created');
-
-      queryClient.invalidateQueries({
-        queryKey: ['notes'],
-        exact: false,
-      });
-
-      setIsOpen(false);
-    },
-    onError: () => {
-      toast.error('Failed to create note');
-    },
-  });
 
   const page = Number(searchParams.get('page')) || 1;
   const search = searchParams.get('search') || '';
@@ -118,11 +97,7 @@ export default function NotesClient() {
 
       {isOpen && (
         <Modal onClose={() => setIsOpen(false)}>
-          <NoteForm
-            onSubmit={(values) => mutation.mutate(values)}
-            isLoading={mutation.isPending}
-            onCancel={() => setIsOpen(false)}
-          />
+          <NoteForm onClose={() => setIsOpen(false)} />
         </Modal>
       )}
     </div>
